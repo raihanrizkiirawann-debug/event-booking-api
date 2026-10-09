@@ -1,69 +1,197 @@
-# CodeIgniter 4 Application Starter
+# Event Booking API
 
-## What is CodeIgniter?
+REST API untuk pengelolaan event dan pemesanan tiket, dibangun menggunakan CodeIgniter 4, PHP, dan MySQL.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+## Fitur
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+* Registrasi dan login pengguna.
+* Autentikasi menggunakan JSON Web Token (JWT).
+* Password disimpan menggunakan hashing.
+* Role-based access control: `admin` dan `user`.
+* Pembatasan percobaan login untuk mengurangi brute-force.
+* CRUD event khusus admin.
+* Daftar event dengan pagination, pencarian judul, dan filter tanggal.
+* Detail event.
+* Pemesanan tiket dengan batas 1–5 tiket per transaksi.
+* Pembatalan booking oleh pemilik booking.
+* Pengelolaan kuota dengan database transaction dan row locking.
+* Validasi tanggal event dan ketersediaan tiket.
+* Respons error JSON yang konsisten.
+* Logging terstruktur untuk membantu debugging.
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Teknologi
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+* PHP 8.2+
+* CodeIgniter 4
+* MySQL / MariaDB
+* Composer
+* JSON Web Token (`firebase/php-jwt`)
+* Postman untuk pengujian API
 
-## Installation & updates
+## Persyaratan
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+Pastikan perangkat sudah memiliki:
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+* PHP 8.2 atau lebih baru.
+* Composer.
+* MySQL atau MariaDB.
+* Ekstensi PHP yang dibutuhkan CodeIgniter 4, termasuk `intl` dan `mbstring`.
+* Git (opsional, untuk mengelola source code).
 
-## Setup
+## Instalasi
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+1. Clone repository:
 
-## Important Change with index.php
+   ```bash
+   git clone https://github.com/raihanrizkiirawann-debug/event-booking-api.git
+   cd event-booking-api
+   ```
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+2. Instal dependency:
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+   ```bash
+   composer install
+   ```
 
-**Please** read the user guide for a better explanation of how CI4 works!
+3. Salin file konfigurasi contoh `env` menjadi `.env`:
 
-## Repository Management
+   ```bash
+   # Windows PowerShell
+   Copy-Item env .env
+   ```
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+4. Buat database MySQL bernama `event_booking`.
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+5. Atur `app.baseURL`, konfigurasi database, dan `JWT_SECRET_KEY` pada `.env`. Gunakan secret JWT yang kuat dan jangan pernah mengunggah `.env` ke repository.
 
-## Server Requirements
+6. Jalankan migration:
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+   ```bash
+   php spark migrate
+   ```
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+7. Jalankan seeder admin:
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+   ```bash
+   php spark db:seed AdminSeeder
+   ```
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+8. Jalankan server development:
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+   ```bash
+   php spark serve
+   ```
+
+API lokal tersedia di `http://localhost:8080`.
+
+> Pastikan file `env`, nama seeder, konfigurasi database, dan variabel JWT sesuai dengan source code project sebelum mengikuti instruksi ini.
+
+## Autentikasi
+
+Endpoint yang membutuhkan autentikasi menggunakan header:
+
+```http
+Authorization: Bearer <JWT_TOKEN>
+```
+
+Login menghasilkan token yang digunakan untuk mengakses endpoint terproteksi. Endpoint pengelolaan event hanya dapat diakses oleh admin.
+
+## Endpoint API
+
+Base URL lokal: `http://localhost:8080`
+
+### Auth
+
+| Method | Endpoint        | Keterangan                |
+| ------ | --------------- | ------------------------- |
+| POST   | `/api/register` | Registrasi user           |
+| POST   | `/api/login`    | Login dan mendapatkan JWT |
+
+### Events
+
+| Method | Endpoint           | Akses  | Keterangan        |
+| ------ | ------------------ | ------ | ----------------- |
+| GET    | `/api/events`      | Publik | Daftar event      |
+| GET    | `/api/events/{id}` | Publik | Detail event      |
+| POST   | `/api/events`      | Admin  | Membuat event     |
+| PUT    | `/api/events/{id}` | Admin  | Memperbarui event |
+| DELETE | `/api/events/{id}` | Admin  | Menghapus event   |
+
+Daftar event mendukung pagination, pencarian judul, dan filter tanggal sesuai parameter yang diimplementasikan pada controller.
+
+### Bookings
+
+| Method | Endpoint             | Akses           | Keterangan                    |
+| ------ | -------------------- | --------------- | ----------------------------- |
+| GET    | `/api/bookings`      | User login      | Melihat booking milik sendiri |
+| POST   | `/api/bookings`      | User login      | Membuat booking               |
+| DELETE | `/api/bookings/{id}` | Pemilik booking | Membatalkan booking           |
+
+### Format request
+
+Registrasi:
+
+```json
+{
+  "name": "Test User",
+  "email": "user@example.com",
+  "password": "Password123!"
+}
+```
+
+Login:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "Password123!"
+}
+```
+
+Membuat event (admin):
+
+```json
+{
+  "title": "Konser Musik",
+  "description": "Konser musik akhir tahun",
+  "event_date": "2026-12-21 19:00:00",
+  "location": "Jakarta",
+  "quota": 100
+}
+```
+
+Membuat booking (user login):
+
+```json
+{
+  "event_id": 1,
+  "quantity": 2
+}
+```
+
+## Aturan Booking
+
+* Event harus memiliki tanggal di masa depan saat booking dibuat.
+* Jumlah tiket per booking adalah 1 sampai 5.
+* Booking ditolak jika kuota tidak mencukupi.
+* Kuota diperbarui dalam transaksi database dengan row locking untuk membantu mencegah overselling.
+* User hanya dapat melihat booking miliknya dan membatalkan booking miliknya sendiri.
+* Booking yang sudah dibatalkan tidak dapat dibatalkan kembali.
+* Pembatalan booking mengembalikan kuota tiket.
+
+## Pengujian API
+
+API dapat diuji menggunakan Postman. Buat request sesuai tabel endpoint di atas, lalu gunakan token JWT hasil login untuk request yang membutuhkan autentikasi.
+
+Periksa status HTTP dan response JSON untuk memastikan operasi berhasil atau gagal sesuai aturan validasi dan akses.
+
+## Keamanan
+
+* Jangan commit file `.env`, kredensial database, JWT secret, atau token autentikasi.
+* Gunakan secret yang berbeda untuk setiap environment.
+* Jangan gunakan kredensial admin contoh pada deployment publik.
+* Untuk deployment, arahkan document root web server ke folder `public`.
+
+## Pengembang
+
+Repository: [event-booking-api](https://github.com/raihanrizkiirawann-debug/event-booking-api)
