@@ -1,0 +1,138 @@
+# -------------------------
+
+# Operating System Files
+
+# -------------------------
+
+# macOS
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Linux
+
+*~
+.directory
+.Trash-*
+
+# -------------------------
+
+# Environment and Secrets
+
+# -------------------------
+
+.env
+.env.*
+!.env.example
+
+.vagrant
+Vagrantfile
+
+# -------------------------
+
+# Runtime and Temporary Files
+
+# -------------------------
+
+/writable/cache/*
+!/writable/cache/index.html
+
+/writable/logs/*
+!/writable/logs/index.html
+
+/writable/session/*
+!/writable/session/index.html
+
+/writable/uploads/*
+!/writable/uploads/index.html
+
+/writable/debugbar/*
+!/writable/debugbar/index.html
+
+php_errors.log
+
+# -------------------------
+
+# Dependencies
+
+# -------------------------
+
+/vendor/
+
+# -------------------------
+
+# Test and Coverage Files
+
+# -------------------------
+
+/tests/coverage*
+/.phpunit
+.phpunit.cache/
+/phpunit.xml
+/results/
+
+# -------------------------
+
+# IDE and Development Files
+
+# -------------------------
+
+# PHPStorm / JetBrains
+
+.idea/
+*.iml
+
+# NetBeans
+
+/nbproject/
+/nb-gradle/
+/nbbuild/
+/dist/
+/nbdist/
+/nbactions.xml
+/nb-configuration.xml
+
+# Sublime Text
+
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# PHP development tools
+
+.phpintel
+.php-version
+_modules/*
+
+# Visual Studio Code
+
+.vscode/
+
+# Build artifacts
+
+/build/
+/builds
+/user_guide_src/build/*
+/user_guide_src/cilexer/build/*
+/user_guide_src/cilexer/dist/*
+/user_guide_src/cilexer/pycilexer.egg-info/*
+
+# API temporary directory
+
+/api/
