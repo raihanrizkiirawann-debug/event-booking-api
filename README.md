@@ -53,16 +53,29 @@ Pastikan perangkat sudah memiliki:
    composer install
    ```
 
-3. Salin file konfigurasi contoh `env` menjadi `.env`:
+3. Buat file `.env` di root project. File `.env` tidak disertakan dalam repository karena berisi konfigurasi lokal.
 
-   ```bash
-   # Windows PowerShell
-   Copy-Item env .env
+   Atur environment untuk pengembangan lokal:
+
+   ```ini
+   CI_ENVIRONMENT = development
+   app.baseURL = 'http://localhost:8080/'
    ```
 
-4. Buat database MySQL bernama `event_booking`.
+4. Buat database MySQL bernama `event_booking` melalui phpMyAdmin atau MySQL, lalu tambahkan konfigurasi berikut ke `.env`:
 
-5. Atur `app.baseURL`, konfigurasi database, dan `JWT_SECRET_KEY` pada `.env`. Gunakan secret JWT yang kuat dan jangan pernah mengunggah `.env` ke repository.
+   ```ini
+   database.default.hostname = localhost
+   database.default.database = event_booking
+   database.default.username = root
+   database.default.password =
+   database.default.DBDriver = MySQLi
+   database.default.port = 3306
+   ```
+
+   Sesuaikan username dan password dengan konfigurasi MySQL lokal.
+
+5. Tambahkan `JWT_SECRET_KEY` dengan nilai rahasia yang kuat dan unik. Jangan unggah file `.env` atau secret ke repository.
 
 6. Jalankan migration:
 
@@ -70,7 +83,7 @@ Pastikan perangkat sudah memiliki:
    php spark migrate
    ```
 
-7. Jalankan seeder admin:
+7. Buat akun admin melalui seeder:
 
    ```bash
    php spark db:seed AdminSeeder
@@ -84,21 +97,8 @@ Pastikan perangkat sudah memiliki:
 
 API lokal tersedia di `http://localhost:8080`.
 
-> Pastikan file `env`, nama seeder, konfigurasi database, dan variabel JWT sesuai dengan source code project sebelum mengikuti instruksi ini.
+**Catatan:** Sesuaikan konfigurasi database dengan instalasi MySQL lokal. Jangan gunakan konfigurasi `development` atau kredensial admin contoh pada deployment publik.
 
-## Autentikasi
-
-Endpoint yang membutuhkan autentikasi menggunakan header:
-
-```http
-Authorization: Bearer <JWT_TOKEN>
-```
-
-Login menghasilkan token yang digunakan untuk mengakses endpoint terproteksi. Endpoint pengelolaan event hanya dapat diakses oleh admin.
-
-## Endpoint API
-
-Base URL lokal: `http://localhost:8080`
 
 ### Auth
 
